@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getProducts,
+  getProduct,
   addProduct,
   updateProduct,
 } = require("../controllers/product");
@@ -11,8 +12,8 @@ const Product = require("../models/product");
 
 router.get("/", async (req, res) => {
   try {
-    const { category } = req.query;
-    const products = await getProducts(category);
+    const { category, perPage, page } = req.query;
+    const products = await getProducts(category, perPage, page);
     res.status(200).send(products);
   } catch (e) {
     res.status(400).send({ message: e.message });
@@ -21,10 +22,14 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    res.status(200).send(product);
+    const product = await getProduct(req.params.id);
+    if (product) {
+      res.status(200).send(product);
+    } else {
+      res.status(404).send({ message: "Product not found!" });
+    }
   } catch (error) {
-    res.status(400).send("Product Not Found");
+    res.status(400).send({ message: error.message });
   }
 });
 
