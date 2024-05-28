@@ -13,6 +13,7 @@ const getProducts = async (category, perPage = 4, page = 1) => {
     */
 
     const products = await Product.find(filters)
+      .populate("category")
       .limit(6)
       .skip((page - 1) * perPage)
       .sort({ _id: -1 });
@@ -47,7 +48,8 @@ const updateProduct = async (
   name,
   description,
   price,
-  category
+  category,
+  image
 ) => {
   const updatedProduct = await Product.findByIdAndUpdate(
     product_id,
@@ -56,6 +58,7 @@ const updateProduct = async (
       description,
       price,
       category,
+      image,
     },
     { new: true }
   );

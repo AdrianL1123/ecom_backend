@@ -12,9 +12,11 @@ const productSchema = new Schema({
     required: true,
   },
   category: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "Category",
     required: true,
   },
+  image: String,
 });
 
 const Product = model("Product", productSchema);

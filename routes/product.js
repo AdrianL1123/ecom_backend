@@ -5,7 +5,7 @@ const {
   addProduct,
   updateProduct,
 } = require("../controllers/product");
-
+const { isAdmin } = require("../middleware/auth");
 const router = express.Router();
 
 const Product = require("../models/product");
@@ -34,7 +34,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //! add
-router.post("/", async (req, res) => {
+router.post("/", isAdmin, async (req, res) => {
   try {
     const { name, description, price, category } = req.body;
     const newProduct = await addProduct(name, description, price, category);
@@ -47,16 +47,17 @@ router.post("/", async (req, res) => {
 });
 
 //! update
-router.put("/:id", async (req, res) => {
+router.put("/:id", isAdmin, async (req, res) => {
   try {
-    const { name, description, price, category } = req.body;
+    const { name, description, price, category, image } = req.body;
     const product_id = req.params.id;
     const updatedProduct = await updateProduct(
       product_id,
       name,
       description,
       price,
-      category
+      category,
+      image
     );
     res.status(200).send(updatedProduct);
   } catch (e) {
@@ -67,7 +68,7 @@ router.put("/:id", async (req, res) => {
 });
 
 //! delete
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", isAdmin, async (req, res) => {
   try {
     const deleteProduct = await Product.findByIdAndDelete(req.params.id);
     res.status(200).send(deleteProduct);
